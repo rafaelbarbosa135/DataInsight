@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 
 st.title("DataInsight")
 
@@ -16,6 +15,38 @@ arquivo_planilha = st.file_uploader(
     "Escolha o tipo de arquivo correspondente à sua planilha:",
     type=["csv", "xlsx"]
 )
+
+
+# Botão para mostrar/esconder a tabela
+def mostrar_tabela(df):
+
+    if "mostrar_tabela" not in st.session_state:
+        st.session_state.mostrar_tabela = False
+
+    if st.button("Verifique sua planilha completa"):
+        st.session_state.mostrar_tabela = (
+            not st.session_state.mostrar_tabela
+        )
+
+    if st.session_state.mostrar_tabela:
+        st.write("Sua planilha foi executada")
+        st.dataframe(df)
+
+# Botão para mostrar/esconder os valores ausentes na tábela
+def mostrar_dados_faltantes(df):
+
+    if "mostrar_dados_faltantes" not in st.session_state:
+        st.session_state.mostrar_dados_faltantes = False
+
+    if st.button("Avaliação de dados ausentes na planilha"):
+        st.session_state.mostrar_dados_faltantes = (
+            not st.session_state.mostrar_dados_faltantes
+        )
+
+    if st.session_state.mostrar_dados_faltantes:
+        st.write("Sua planilha foi executada")
+        st.dataframe(df.isna().sum())
+
 
 if arquivo_planilha is not None:
 
@@ -33,33 +64,23 @@ if arquivo_planilha is not None:
 
         # Verificar se a planilha está vazia
         if df.empty:
+
             st.warning(
                 "A planilha inserida não possui dados para análise."
             )
 
         else:
 
-            # Arquivo válido e com dados
             st.success(
                 f"Arquivo '{arquivo_planilha.name}' carregado com sucesso!"
             )
 
-            # Mostrar uma prévia da planilha
             st.write("Prévia dos dados:")
             st.dataframe(df.head())
 
-            # Botão para mostrar/esconder a tabela
-            if "mostrar_tabela" not in st.session_state:
-                st.session_state.mostrar_tabela = False
-
-            if st.button("Informações da sua planilha em forma de tabela"):
-                st.session_state.mostrar_tabela = (
-                    not st.session_state.mostrar_tabela
-                )
-
-            if st.session_state.mostrar_tabela:
-                st.write("Sua planilha foi executada")
-                st.dataframe(df)
+            # CORREÇÃO: chamar as funções somente depois que df existe
+            mostrar_tabela(df)
+            mostrar_dados_faltantes(df)
 
     except Exception as erro:
 
