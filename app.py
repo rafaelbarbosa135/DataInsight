@@ -15,7 +15,20 @@ arquivo_planilha = st.file_uploader(
     "Escolha o tipo de arquivo correspondente à sua planilha:",
     type=["csv", "xlsx"]
 )
+# Botão para correcão ortográfica
+def verificacão_ortográfica(df):
 
+    if "mostrar_correcao_ortografica" not in st.session_state:
+        st.session_state.mostrar_correcao_ortografica = False
+
+    if st.button("Verifique possiveis erros ortográficos"):
+        st.session_state.mostrar_correcao_ortografica = (
+            not st.session_state.mostrar_correcao_ortografica
+        )
+
+    if st.session_state.mostrar_correcao_ortografica:
+        st.write("Possíveis erros ortográficos encontrados:")
+        ...
 
 # Botão para mostrar/esconder a tabela
 def mostrar_tabela(df):
@@ -31,6 +44,7 @@ def mostrar_tabela(df):
     if st.session_state.mostrar_tabela:
         st.write("Sua planilha foi executada")
         st.dataframe(df)
+
 
 # Botão para mostrar/esconder os valores ausentes na tábela
 def mostrar_dados_faltantes(df):
@@ -78,7 +92,6 @@ if arquivo_planilha is not None:
             st.write("Prévia dos dados:")
             st.dataframe(df.head())
 
-            # CORREÇÃO: chamar as funções somente depois que df existe
             mostrar_tabela(df)
             mostrar_dados_faltantes(df)
 
@@ -87,3 +100,4 @@ if arquivo_planilha is not None:
         st.error(
             f"Não foi possível ler a planilha: {erro}"
         )
+
